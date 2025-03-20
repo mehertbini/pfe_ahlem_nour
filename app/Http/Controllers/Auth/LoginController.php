@@ -23,14 +23,14 @@ class LoginController extends Controller
 
         if ($user->role === 'admin') {
             return '/admin';
-        } elseif ($user->role === 'user') {
-            return '/user';
+        } elseif ($user->role === 'farmer') {
+            return '/farmer';
         } elseif ($user->role === 'transporter') {
-            return '/transporter/home';
+            return '/transporter';
         } elseif ($user->role === 'distributor') {
-            return '/distributor/home';
+            return '/distributor';
         } elseif ($user->role === 'individual') {
-            return '/individual/home';
+            return '/individual';
         }
 
         return '/error'; // Default redirection

@@ -20,7 +20,7 @@ class adminMiddleware
         {
             return $next($request);
         }else{
-            return redirect('404')->with('status', 'You are not allowed to acces the Admin.!');
+            return redirect('404')->with('message', 'You are not allowed to access the Admin.!');
         }
     }
 }

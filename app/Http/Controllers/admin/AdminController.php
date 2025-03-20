@@ -26,7 +26,7 @@ class AdminController extends Controller
         $request->validate([
             'firstname' => 'required|string|max:255',
             'email'     => 'required|email|unique:users,email',
-            'role'      => 'required|in:user,transporter,distributor',
+            'role'      => 'required|in:farmer,transporter,distributor,individual',
             'password'  => 'required|min:8',
         ]);
 
@@ -48,7 +48,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required|string',
+            'role'      => 'required|in:farmer,transporter,distributor,individual',
             'password' => 'nullable|min:6',
         ]);
 

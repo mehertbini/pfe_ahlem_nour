@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'isAdmin' => App\Http\Middleware\adminMiddleware::class,
             'isUser' => App\Http\Middleware\userMiddleware::class,
             'isTransporter' => App\Http\Middleware\transporteurMiddleware::class,
-            'isDistribute' => App\Http\Middleware\distibuteurMiddleware::class,
+            'isDistributor' => App\Http\Middleware\distibuteurMiddleware::class,
             'isIndividual' => App\Http\Middleware\individuelMiddleware::class,
         ]);
     })

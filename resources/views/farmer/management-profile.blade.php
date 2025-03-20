@@ -1,4 +1,4 @@
-@extends('layouts.app_admin')
+@extends('layouts.app_farmer')
 @section('content')
     <link rel="stylesheet" href="{{ asset('admin_css/assets/css/lib/datatable/dataTables.bootstrap.min.css') }}">
 
@@ -8,7 +8,7 @@
                 <div class="col-sm-4">
                     <div class="page-header float-left">
                         <div class="page-title">
-                            <h1>Dashboard</h1>
+                            <h1>Farmer</h1>
                         </div>
                     </div>
                 </div>
@@ -16,9 +16,9 @@
                     <div class="page-header float-right">
                         <div class="page-title">
                             <ol class="breadcrumb text-right">
-                                <li><a href="#">Dashboard</a></li>
-                                <li><a href="#">Table</a></li>
-                                <li class="active">Data table</li>
+                                <li><a href="#">Farmer</a></li>
+                                <li><a href="#">Management</a></li>
+                                <li class="active">Profile</li>
                             </ol>
                         </div>
                     </div>
@@ -32,27 +32,21 @@
 
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <strong class="card-title">Management Users</strong>
-                            <a href="" class="btn btn btn-sm text-white" data-toggle="modal" data-target="#addUser" style="background: #00c292;"><i class="fa fa-user-plus"></i> Add User</a> <!-- Green Add User Button -->
-                        </div>
                         <div class="card-body">
                             <!-- User Table -->
                             <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                                <thead>
+                                <thead style="background: #00c292;color: white;">
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
-                                    <th>Role</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @forelse($users as $user)
+                                @foreach($users as $user)
                                     <tr>
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->email }}</td>
-                                        <td>{{ $user->role ?? 'N/A' }}</td>
                                         <td>
                                             <!-- Edit Button -->
                                             <button class="btn btn-sm btn-outline-primary" data-toggle="modal"
@@ -82,7 +76,7 @@
 
                                                 <div class="modal-body">
                                                     <div class="card-body card-block">
-                                                        <form action="{{ route('handleUpdateUser', $user->id) }}" method="POST">
+                                                        <form action="{{ route('handleUpdateProfile', $user->id) }}" method="POST">
                                                             @csrf
                                                             @method('PUT')
 
@@ -101,36 +95,20 @@
                                                                                class="form-control">
                                                                     </div>
                                                                 </div>
-                                                            </div>
 
-                                                            <div class="form-group row">
-                                                                <div class="col-md-6">
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-addon"><i class="fa fa-align-justify"></i></div>
-                                                                        <select class="form-control" name="role">
-                                                                            <option disabled>Choose Role</option>
-                                                                            <option value="farmer" {{ $user->role == 'farmer' ? 'selected' : '' }}>Farmer</option>
-                                                                            <option value="transpoter"
-                                                                                {{ $user->role == 'transpoter' ? 'selected' : '' }}>Transporter
-                                                                            </option>
-                                                                            <option value="distributor"
-                                                                                {{ $user->role == 'distributor' ? 'selected' : '' }}>Distributor
-                                                                            </option>
-                                                                            <option value="individual"
-                                                                                {{ $user->role == 'individual' ? 'selected' : '' }}>Individual
-                                                                            </option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
+                                                                <!-- Password Input -->
+                                                                <div class="col-md-6 mt-3">
                                                                     <div class="input-group">
                                                                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                                                        <input type="password" id="password" name="password"
-                                                                               placeholder="New Password (optional)" class="form-control">
+                                                                        <input type="password" id="password" name="password" placeholder="New Password (optional)" class="form-control">
                                                                     </div>
+                                                                    @error('password')
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                    @enderror
                                                                 </div>
-                                                            </div>
 
+
+                                                            </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
                                                                         data-dismiss="modal">Cancel</button>
@@ -143,11 +121,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center">No users found.</td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -191,39 +165,13 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-align-justify"></i></div>
-                                            <select class="form-control" name="role">
-                                                <option disabled selected>Choose role</option>
-                                                <option value="farmer" {{ old('role') == 'farmer' ? 'selected' : '' }}>Farmer</option>
-                                                <option value="transporter" {{ old('role') == 'transporter' ? 'selected' : '' }}>Transporter</option>
-                                                <option value="distributor" {{ old('role') == 'distributor' ? 'selected' : '' }}>Distributor</option>
-                                                <option value="individual" {{ old('role') == 'individual' ? 'selected' : '' }}>Individual</option>
-                                            </select>
-                                        </div>
-                                        @error('role')
-                                        <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                            <input type="password" id="password" name="password" placeholder="Password" class="form-control">
-                                        </div>
-                                        @error('password')
-                                        <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-success">Create</button>
                     </div>
-                 </form>
+                </form>
             </div>
         </div>
     </div>

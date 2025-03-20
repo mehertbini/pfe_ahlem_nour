@@ -1,12 +1,8 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Admin Career</title>
+    <title>{{Auth::user()->role ?? ""}} Career</title>
     <meta name="description" content="Ela Admin - HTML5 Admin Template">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -19,7 +15,6 @@
     <link rel="stylesheet" href="{{asset('admin_css/assets/css/cs-skin-elastic.css')}}">
     <link rel="stylesheet" href="{{asset('admin_css/assets/css/style.css')}}">
 
-    <link href="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.css" rel="stylesheet">
 
 </head>
 
@@ -27,20 +22,46 @@
 <!-- Left Panel -->
 <aside id="left-panel" class="left-panel">
     <nav class="navbar navbar-expand-sm navbar-default">
+
         <div id="main-menu" class="main-menu collapse navbar-collapse">
             <ul class="nav navbar-nav">
+                <li class="menu-title">Welcome {{ Auth::user()->role ?? "user" }}</li>
+{{--
+                <li class="menu-item {{ request()->routeIs('showStocks') ? 'active' : '' }}">
+                    <a href="{{ route('showStocks') }}" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-bar-chart"></i>Management Stocks
+                    </a>
+                </li>
 
-                <li class="menu-title">Welcome {{Auth::user()->role ?? "user"}}</li><!-- /.menu-title -->
-                <li class="menu-item">
-                    <a href="{{url('/admin')}}" class="dropdown-toggle"> <i class="menu-icon fa fa-bar-chart"></i>Management statistic</a>
+                <li class="nav-item {{ request()->routeIs('showProfiles') ? 'active' : '' }}">
+                    <a href="{{ route('showProfiles') }}" class="nav-link">
+                        <i class="menu-icon fa fa-users"></i> Management Profiles
+                    </a>
                 </li>
-                <li class="menu-item">
-                    <a href="{{route('showUsers')}}" class="dropdown-toggle"> <i class="menu-icon fa fa-users"></i>Management users </a>
-                </li>
+
+                <li class="menu-item-has-children dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="menu-icon fa fa-bar-chart"></i> Management Task
+                    </a>
+                    <ul class="sub-menu children dropdown-menu">
+                        <li>
+                            <a href="" class="dropdown-item">
+                             Member
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="dropdown-item">
+                              Event
+                            </a>
+                        </li>
+                    </ul>
+                </li>--}}
+
 
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
+
 </aside>
 <!-- /#left-panel -->
 <!-- Right Panel -->
@@ -52,6 +73,7 @@
                 <a class="navbar-brand" href="{{ Auth::check() ? url('/' . Auth::user()->role) : url('/') }}">
                     <img src="{{ asset('admin_css/images/logo.png') }}" alt="Logo">
                 </a>
+
                 <a class="navbar-brand hidden" href="./"><img src="{{asset('admin_css/images/logo2.png')}}" alt="Logo"></a>
                 <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
             </div>
@@ -158,68 +180,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
 <script src="{{asset('admin_css/assets/js/main.js')}}"></script>
 
-<script>
-    var ctx = document.getElementById( "singelBarChart" );
-    ctx.height = 150;
-    var myChart = new Chart( ctx, {
-        type: 'bar',
-        data: {
-            labels: [ "Sun", "Mon", "Tu", "Wed", "Th", "Fri", "Sat" ],
-            datasets: [
-                {
-                    label: "My First dataset",
-                    data: [ 55, 50, 75, 80, 56, 55, 60 ],
-                    borderColor: "rgba(0, 194, 146, 0.9)",
-                    borderWidth: "0",
-                    backgroundColor: "rgba(0, 194, 146, 0.5)"
-                }
-            ]
-        },
-        options: {
-            scales: {
-                yAxes: [ {
-                    ticks: {
-                        beginAtZero: true
-                    }
-                } ]
-            }
-        }
-    } );
 
-    //doughut chart
-    var ctx = document.getElementById( "doughutChart" );
-    ctx.height = 150;
-    var myChart = new Chart( ctx, {
-        type: 'doughnut',
-        data: {
-            datasets: [ {
-                data: [ 35, 40, 20, 5 ],
-                backgroundColor: [
-                    "rgba(0, 194, 146,0.9)",
-                    "rgba(0, 194, 146,0.7)",
-                    "rgba(0, 194, 146,0.5)",
-                    "rgba(0,0,0,0.07)"
-                ],
-                hoverBackgroundColor: [
-                    "rgba(0, 194, 146,0.9)",
-                    "rgba(0, 194, 146,0.7)",
-                    "rgba(0, 194, 146,0.5)",
-                    "rgba(0,0,0,0.07)"
-                ]
-
-            } ],
-            labels: [
-                "green",
-                "green",
-                "green",
-                "green"
-            ]
-        },
-        options: {
-            responsive: true
-        }
-    } );
-
-</script>
 </body>
 </html>
