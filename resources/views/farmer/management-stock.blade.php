@@ -33,7 +33,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <strong class="card-title">Management $stocks</strong>
+                            <strong class="card-title">Management stocks</strong>
                             <a href="" class="btn btn btn-sm text-white" data-toggle="modal" data-target="#addStock" style="background: #00c292;"><i class="fa fa-user-plus"></i> Add Stock</a> <!-- Green Add User Button -->
                         </div>
                         <div class="card-body">
@@ -99,16 +99,17 @@
                                                             <label for="unite">Unit</label>
                                                             <input type="text" name="unite" id="unite" class="form-control" value="{{ $stock->unite }}">
                                                         </div>
+                                                        <div class="form-group">
+                                                            <label for="plantDate">Plant Date</label>
+                                                            <input type="date" name="plantDate" id="plantDate" class="form-control" value="{{ $stock->plantDate }}">
+                                                        </div>
 
                                                         <div class="form-group">
                                                             <label for="harvestDate">Harvest Date</label>
                                                             <input type="date" name="harvestDate" id="harvestDate" class="form-control" value="{{ $stock->harvestDate }}">
                                                         </div>
 
-                                                        <div class="form-group">
-                                                            <label for="plantDate">Plant Date</label>
-                                                            <input type="date" name="plantDate" id="plantDate" class="form-control" value="{{ $stock->plantDate }}">
-                                                        </div>
+
 
                                                         <div class="form-group">
                                                             <label for="health">Health</label>
@@ -182,9 +183,10 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="harvestDate">Harvest Date</label>
-                                    <input type="date" id="harvestDate" name="harvestDate" class="form-control" value="{{ old('harvestDate') }}">
-                                    @error('harvestDate')
+
+                                    <label for="plantDate">Plant Date</label>
+                                    <input type="date" id="plantDate" name="plantDate" class="form-control" value="{{ old('plantDate') }}">
+                                    @error('plantDate')
                                     <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -192,9 +194,9 @@
 
                             <div class="form-group row">
                                 <div class="col-md-6">
-                                    <label for="plantDate">Plant Date</label>
-                                    <input type="date" id="plantDate" name="plantDate" class="form-control" value="{{ old('plantDate') }}">
-                                    @error('plantDate')
+                                    <label for="harvestDate">Harvest Date</label>
+                                    <input type="date" id="harvestDate" name="harvestDate" class="form-control" value="{{ old('harvestDate') }}">
+                                    @error('harvestDate')
                                     <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>

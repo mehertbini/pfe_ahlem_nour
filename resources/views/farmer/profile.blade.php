@@ -1,4 +1,4 @@
-@extends('layouts.app_admin')
+@extends('layouts.app_farmer')
 
 @section('content')
     <div class="breadcrumbs">
@@ -32,7 +32,7 @@
                     <div class="card">
                         <div class="card-header text-center">Edit Profile</div>
                         <div class="card-body card-block">
-                            <form action="{{ route('changeAdminProfile') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('changeProfile') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 

@@ -1,4 +1,4 @@
-@extends('layouts.app_admin')
+@extends('layouts.app_farmer')
 
 @section('content')
     <div class="breadcrumbs">
@@ -16,7 +16,7 @@
                         <div class="page-title">
                             <ol class="breadcrumb text-right">
                                 <li><a href="#">Dashboard</a></li>
-                                <li><a href="active">Edit Profile</a></li>
+                                <li><a href="active">Change password</a></li>
                             </ol>
                         </div>
                     </div>
@@ -30,41 +30,40 @@
             <div class="d-flex justify-content-center align-items-center vh-100">
                 <div class="col-lg-8">
                     <div class="card">
-                        <div class="card-header text-center">Edit Profile</div>
+                        <div class="card-header text-center">Change Password</div>
                         <div class="card-body card-block">
-                            <form action="{{ route('changeAdminProfile') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('changePassword') }}" method="POST">
                                 @csrf
-                                @method('PUT')
 
                                 <div class="form-group">
-                                    <label for="name">Full Name</label>
-                                    <input type="text" id="name" name="name" value="{{ auth()->user()->name }}" class="form-control" required>
-                                    @error('name')
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-key"></i></div>
+                                        <input type="password" id="current_password" name="current_password" placeholder="Current Password" class="form-control" required>
+                                    </div>
+                                    @error('current_password')
                                     <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" id="email" name="email" value="{{ auth()->user()->email }}" class="form-control" required>
-                                    @error('email')
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+                                        <input type="password" id="new_password" name="new_password" placeholder="New Password" class="form-control" required>
+                                    </div>
+                                    @error('new_password')
                                     <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="profile_picture">Profile Picture</label>
-                                    <input type="file" id="profile_picture" name="profile_picture" class="form-control">
-                                    @error('profile_picture')
-                                    <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                    @if(auth()->user()->profile_picture)
-                                        <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" alt="Profile Picture" width="100" class="mt-2">
-                                    @endif
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+                                        <input type="password" id="new_password_confirmation" name="new_password_confirmation" placeholder="Confirm New Password" class="form-control" required>
+                                    </div>
                                 </div>
 
                                 <div class="form-actions form-group text-center">
-                                    <button type="submit" class="btn btn-success">Update Profile</button>
+                                    <button type="submit" class="btn btn-success">Change</button>
                                 </div>
                             </form>
                         </div>

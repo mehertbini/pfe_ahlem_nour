@@ -105,13 +105,14 @@
 
                 <div class="user-area dropdown float-right">
                     <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="user-avatar rounded-circle" src="{{asset('admin_css/images/admin.jpg')}}" alt="User Avatar">
+                        <img class="user-avatar rounded-circle" style="width: 40px;height: 40px;object-fit: cover" src="{{ auth()->user()->profile_picture ? asset('storage/' . auth()->user()->profile_picture) : asset('admin_css/images/admin.jpg') }}" alt="User Avatar">
+
                     </a>
 
                     <div class="user-menu dropdown-menu">
-                        <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a>
+                        <a class="nav-link" href="{{route('showIndividualPageChangeProfile')}}"><i class="fa fa-user"></i>My Profile</a>
 
-                        <a class="nav-link" href="{{route('showPageChangePassword')}}"><i class="fa fa-lock"></i>Change password</a>
+                        <a class="nav-link" href="{{route('showIndividualPageChangePassword')}}"><i class="fa fa-lock"></i>Change password</a>
 
 
                         <li>

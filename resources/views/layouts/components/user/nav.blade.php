@@ -17,7 +17,11 @@
                                        style="color: #0ce442; position: absolute; top: 20px; right: -5px;"></i>
                                 </div>
                                 <ul>
+                                    @if(Auth::check() && Auth::user()->role === 'admin')
+                                        <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                                    @endif
                                     <li><a href="#">Profile</a></li>
+
                                     <li>
                                         <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

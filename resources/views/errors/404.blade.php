@@ -127,7 +127,7 @@
         </p>
     </div>
 
-    <a href="" class="error-button">Back to Home</a>
+    <a href="{{url('/')}}" class="error-button">Back to Home</a>
 </main>
 
 <button class="color-switcher" onclick="toggleTheme()">🌙</button>

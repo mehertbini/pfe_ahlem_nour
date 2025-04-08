@@ -11,4 +11,13 @@ class individualController extends Controller
     {
         return view('individual.index');
     }
+
+    public function showIndividualPageChangePassword()
+    {
+        return view('individual.password');
+    }
+    public function showIndividualPageChangeProfile()
+    {
+        return view('individual.profile');
+    }
 }

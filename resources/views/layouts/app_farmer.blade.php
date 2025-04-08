@@ -33,29 +33,31 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ request()->routeIs('showProfiles') ? 'active' : '' }}">
-                    <a href="{{ route('showProfiles') }}" class="nav-link">
-                        <i class="menu-icon fa fa-users"></i> Management Profiles
-                    </a>
-                </li>
 
-                <li class="menu-item-has-children dropdown">
+
+                <li class="menu-item-has-children dropdown {{ request()->routeIs('showMember', 'showEvent', 'taskRoute') ? 'active' : '' }}">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="menu-icon fa fa-bar-chart"></i> Management Task
+                        <i class="menu-icon fa fa-bar-chart"></i> Management Project
                     </a>
                     <ul class="sub-menu children dropdown-menu">
                         <li>
-                            <a href="" class="dropdown-item">
-                             Member
+                            <a href="{{ route('showMember') }}" class="dropdown-item {{ request()->routeIs('showMember') ? 'active' : '' }}">
+                                Member
                             </a>
                         </li>
                         <li>
-                            <a href="" class="dropdown-item">
-                              Event
+                            <a href="{{route('showEvent')}}" class="dropdown-item {{ request()->routeIs('showEvent') ? 'active' : '' }}">
+                                Event
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="dropdown-item {{ request()->routeIs('taskRoute') ? 'active' : '' }}">
+                                Task
                             </a>
                         </li>
                     </ul>
                 </li>
+
 
 
             </ul>
@@ -105,11 +107,12 @@
 
                 <div class="user-area dropdown float-right">
                     <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="user-avatar rounded-circle" src="{{asset('admin_css/images/admin.jpg')}}" alt="User Avatar">
+                        <img class="user-avatar rounded-circle" style="width: 40px;height: 40px;object-fit: cover" src="{{ auth()->user()->profile_picture ? asset('storage/' . auth()->user()->profile_picture) : asset('admin_css/images/admin.jpg') }}" alt="User Avatar">
+
                     </a>
 
                     <div class="user-menu dropdown-menu">
-                        <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a>
+                        <a class="nav-link" href="{{route('showPageChangeProfile')}}"><i class="fa fa-user"></i>My Profile</a>
 
                         <a class="nav-link" href="{{route('showPageChangePassword')}}"><i class="fa fa-lock"></i>Change password</a>
 

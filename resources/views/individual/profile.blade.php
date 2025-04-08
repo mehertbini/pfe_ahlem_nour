@@ -1,4 +1,4 @@
-@extends('layouts.app_admin')
+@extends('layouts.app_individual')
 
 @section('content')
     <div class="breadcrumbs">
@@ -32,10 +32,9 @@
                     <div class="card">
                         <div class="card-header text-center">Edit Profile</div>
                         <div class="card-body card-block">
-                            <form action="{{ route('changeAdminProfile') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('changeIndividualProfile') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
-
                                 <div class="form-group">
                                     <label for="name">Full Name</label>
                                     <input type="text" id="name" name="name" value="{{ auth()->user()->name }}" class="form-control" required>

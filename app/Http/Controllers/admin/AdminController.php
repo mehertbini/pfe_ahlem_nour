@@ -104,4 +104,9 @@ class AdminController extends Controller
         return back()->with('success', 'Password changed successfully!');
     }
 
+    public function showAdminPageChangeProfile()
+    {
+        return view('admin.profile');
+    }
+
 }
