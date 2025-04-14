@@ -6,8 +6,8 @@
     <!-- Main css -->
     <link rel="stylesheet" href="login_css/css/style.css">
 
+
     <div class="main">
-        <!-- Sign in Form -->
         <section class="sign-in">
             <div class="container">
                 <div class="signin-content">
@@ -19,6 +19,12 @@
                     <div class="signin-form">
                         <h2 class="form-title">Sign in</h2>
 
+                        <!-- Display Message if User's Account is Blocked -->
+                        @if(session('message'))
+                            <div class="alert" style="color: #ed1818 !important">
+                                {{ session('message') }}
+                            </div>
+                        @endif
                         @if(session('error'))
                             <div class="alert alert-danger">
                                 {{ session('error') }}

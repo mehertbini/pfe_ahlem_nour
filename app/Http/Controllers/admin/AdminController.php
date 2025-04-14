@@ -28,12 +28,14 @@ class AdminController extends Controller
             'email'     => 'required|email|unique:users,email',
             'role'      => 'required|in:farmer,transporter,distributor,individual',
             'password'  => 'required|min:8',
+            'phone'  => 'required|max:8|unique:users',
         ]);
 
         User::create([
             'name' => $request->firstname,
             'email' => $request->email,
             'role' => $request->role,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
         ]);
 
@@ -49,12 +51,14 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'role'      => 'required|in:farmer,transporter,distributor,individual',
-            'password' => 'nullable|min:6',
+            'password' => 'nullable|min:8',
+            'phone' => 'nullable|max:8|unique:users',
         ]);
 
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
+        $user->phone = $request->phone;
 
         if ($request->password) {
             $user->password = Hash::make($request->password);
@@ -108,5 +112,15 @@ class AdminController extends Controller
     {
         return view('admin.profile');
     }
+
+    public function toggleStatus($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = $user->status === 1 ? 0 : 1;
+        $user->save();
+
+        return redirect()->back()->with('success', 'User status updated successfully!');
+    }
+
 
 }

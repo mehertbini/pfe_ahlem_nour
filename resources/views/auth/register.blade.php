@@ -9,6 +9,13 @@
                 <div class="signup-content">
                     <div class="signup-form">
                         <h2 class="form-title">Sign up</h2>
+                        <!-- Display Message if User's Account is Blocked -->
+                        @if(session('message'))
+                            <div class="alert" style="color: #ed1818 !important">
+                                {{ session('message') }}
+                            </div>
+                        @endif
+
                         <form method="POST" action="{{ route('register') }}">
                             @csrf
                             <div class="form-group">
@@ -19,6 +26,24 @@
                                 <label for="email"><i class="zmdi zmdi-email"></i></label>
                                 <input type="email" name="email" id="email" placeholder="Your Email"/>
                             </div>
+                            <!-- Phone Number Field -->
+                            <div class="form-group">
+                                <label for="phone"><i class="zmdi zmdi-phone"></i></label>
+                                <input type="text" name="phone" id="phone" placeholder="Your Phone Number"/>
+                            </div>
+
+                            <!-- Role Selection -->
+                            <div class="form-group">
+                                <label for="role"><i class="zmdi zmdi-account-circle"></i></label>
+                                <select name="role" id="role">
+                                    <option value="transporter">Transporter</option>
+                                    <option value="distributor">Distributor</option>
+                                    <option value="farmer">Farmer</option>
+                                    <option value="individual">Individual</option>
+                                </select>
+                            </div>
+
+
                             <div class="form-group">
                                 <label for="pass"><i class="zmdi zmdi-lock"></i></label>
                                 <input type="password" name="password" id="password" placeholder="Password"/>

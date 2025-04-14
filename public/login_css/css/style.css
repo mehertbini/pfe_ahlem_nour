@@ -351,6 +351,41 @@ input[type=checkbox]:not(old) {
   font-size: 1em;
   display: none; }
 
+
+select {
+    width: 100%;
+    display: block;
+    border: none;
+    border-bottom: 1px solid #999;
+    padding: 6px 30px;
+    font-family: Poppins;
+    box-sizing: border-box; }
+input::-webkit-input-placeholder {
+    color: #999; }
+input::-moz-placeholder {
+    color: #999; }
+input:-ms-input-placeholder {
+    color: #999; }
+input:-moz-placeholder {
+    color: #999; }
+input:focus {
+    border-bottom: 1px solid #222; }
+input:focus::-webkit-input-placeholder {
+    color: #222; }
+input:focus::-moz-placeholder {
+    color: #222; }
+input:focus:-ms-input-placeholder {
+    color: #222; }
+input:focus:-moz-placeholder {
+    color: #222; }
+
+input[type=select]:not(old) {
+    width: 2em;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+    display: none; }
+
 input[type=checkbox]:not(old) + label {
   display: inline-block;
   line-height: 1.5em;

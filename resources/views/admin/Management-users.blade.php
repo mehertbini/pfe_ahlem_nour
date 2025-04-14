@@ -45,6 +45,8 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
+                                    <th>phone</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -60,6 +62,19 @@
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td>{{ $user->role ?? 'N/A' }}</td>
+                                        <td>{{ $user->phone ?? 'N/A' }}</td>
+                                        <td>
+                                            <!-- Toggle Status Form -->
+                                            <form action="{{ route('toggleUserStatus', $user->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-sm {{ $user->status == 1 ? 'btn-success' : 'btn-secondary' }}">
+                                                    <i class="fa {{ $user->status == 1 ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i>
+                                                   {{$user->status === 1 ? "On": "Off"}}
+                                                </button>
+                                            </form>
+
+                                        </td>
                                         <td>
                                             <!-- Edit Button -->
                                             <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#editUser{{ $user->id }}">
@@ -85,6 +100,92 @@
                                                     <img src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('admin_css/images/admin.jpg') }}"
                                                          alt="User Photo" class="img-fluid rounded">
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Edit User Modal -->
+                                    <div class="modal fade" id="editUser{{ $user->id }}" tabindex="-1" role="dialog"
+                                         aria-labelledby="editUserLabel{{ $user->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editUserLabel{{ $user->id }}">Edit User</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <div class="card-body card-block">
+                                                        <form action="{{ route('handleUpdateUser', $user->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="form-group row">
+                                                                <div class="col-md-6">
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                                                        <input type="text" id="name" name="name" value="{{ $user->name }}"
+                                                                               class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-addon"><i class="fa fa-envelope"></i></div>
+                                                                        <input type="email" id="email" name="email" value="{{ $user->email }}"
+                                                                               class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="col-md-6">
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-addon"><i class="fa fa-align-justify"></i></div>
+                                                                        <select class="form-control" name="role">
+                                                                            <option disabled>Choose Role</option>
+                                                                            <option value="farmer"
+                                                                                {{ $user->role == 'farmer' ? 'selected' : '' }}>Farmer
+                                                                            </option>
+                                                                            <option value="transpoter"
+                                                                                {{ $user->role == 'transpoter' ? 'selected' : '' }}>Transporter
+                                                                            </option>
+                                                                            <option value="distributor"
+                                                                                {{ $user->role == 'distributor' ? 'selected' : '' }}>Distributor
+                                                                            </option>
+                                                                            <option value="individual"
+                                                                                {{ $user->role == 'individual' ? 'selected' : '' }}>Individual
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                                                                        <input type="password" id="password" name="password"
+                                                                               placeholder="New Password (optional)" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col-md-12">
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-addon"><i class="fa fa-phone"></i></div>
+                                                                        <input type="text" id="phone" name="phone" value="{{$user->phone}}"
+                                                                               placeholder="phone" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                        data-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-success">Update</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -158,6 +259,15 @@
                                         @enderror
                                     </div>
                                 </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-phone"></i></div>
+                                        <input type="text" id="phone" name="phone"
+                                               placeholder="phone" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

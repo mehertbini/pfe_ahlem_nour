@@ -23,6 +23,8 @@ Route::group(['prefix'=>'admin', 'middleware'=>['isAdmin','auth']], function(){
     Route::post('/users/add',       [AdminController::class, 'handleAddUser'])->name('handleAddUser');
     Route::put('/users/update/{id}', [AdminController::class,'handleUpdateUser'])->name('handleUpdateUser');
     Route::get('/users/delete/{id}', [AdminController::class, 'handleDeleteUser'])->name('handleDeleteUser');
+    Route::patch('/users/toggle-status/{id}', [AdminController::class, 'toggleStatus'])->name('toggleUserStatus');
+
 
     Route::get('/change-password',        [AdminController::class, 'showPageChangePassword'])->name('showAdminPageChangePassword');
     Route::post('/change-password/update',[AdminController::class, 'changePassword'])->name('changePassword');
