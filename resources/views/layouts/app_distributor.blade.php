@@ -26,38 +26,18 @@
         <div id="main-menu" class="main-menu collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="menu-title">Welcome {{ Auth::user()->role ?? "user" }}</li>
-{{--
-                <li class="menu-item {{ request()->routeIs('showStocks') ? 'active' : '' }}">
-                    <a href="{{ route('showStocks') }}" class="dropdown-toggle">
-                        <i class="menu-icon fa fa-bar-chart"></i>Management Stocks
+
+                <li class="menu-item {{ request()->routeIs('distributor') ? 'active' : '' }}">
+                    <a href="{{route('distributor')}}" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-bar-chart"></i>Management sales
                     </a>
                 </li>
 
                 <li class="nav-item {{ request()->routeIs('showProfiles') ? 'active' : '' }}">
-                    <a href="{{ route('showProfiles') }}" class="nav-link">
-                        <i class="menu-icon fa fa-users"></i> Management Profiles
+                    <a href="" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-users"></i> Management purchasing
                     </a>
                 </li>
-
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="menu-icon fa fa-bar-chart"></i> Management Task
-                    </a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li>
-                            <a href="" class="dropdown-item">
-                             Member
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="dropdown-item">
-                              Event
-                            </a>
-                        </li>
-                    </ul>
-                </li>--}}
-
-
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
@@ -111,9 +91,9 @@
                     </a>
 
                     <div class="user-menu dropdown-menu">
-                        <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a>
+                        <a class="nav-link" href="{{route('showDistributorPageChangeProfile')}}"><i class="fa fa-user"></i>My Profile</a>
 
-                        <a class="nav-link" href="{{route('showPageChangePassword')}}"><i class="fa fa-lock"></i>Change password</a>
+                        <a class="nav-link" href="{{route('showDistributorPageChangePassword')}}"><i class="fa fa-lock"></i>Change password</a>
 
 
                         <li>

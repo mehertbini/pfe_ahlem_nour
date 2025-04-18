@@ -147,8 +147,8 @@
                                                                             <option value="farmer"
                                                                                 {{ $user->role == 'farmer' ? 'selected' : '' }}>Farmer
                                                                             </option>
-                                                                            <option value="transpoter"
-                                                                                {{ $user->role == 'transpoter' ? 'selected' : '' }}>Transporter
+                                                                            <option value="transporter"
+                                                                                {{ $user->role == 'transporter' ? 'selected' : '' }}>Transporter
                                                                             </option>
                                                                             <option value="distributor"
                                                                                 {{ $user->role == 'distributor' ? 'selected' : '' }}>Distributor
@@ -185,7 +185,6 @@
                                                         </form>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>

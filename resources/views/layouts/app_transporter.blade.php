@@ -22,42 +22,21 @@
 <!-- Left Panel -->
 <aside id="left-panel" class="left-panel">
     <nav class="navbar navbar-expand-sm navbar-default">
-
         <div id="main-menu" class="main-menu collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="menu-title">Welcome {{ Auth::user()->role ?? "user" }}</li>
-{{--
-                <li class="menu-item {{ request()->routeIs('showStocks') ? 'active' : '' }}">
-                    <a href="{{ route('showStocks') }}" class="dropdown-toggle">
-                        <i class="menu-icon fa fa-bar-chart"></i>Management Stocks
+
+                <li class="menu-item {{ request()->routeIs('transporter') ? 'active' : '' }}">
+                    <a href="{{route('transporter')}}" class="dropdown-toggle" style="font-size: 13px !important;">
+                        <i class="menu-icon fa fa-bar-chart"></i>Management Transporter
                     </a>
                 </li>
 
-                <li class="nav-item {{ request()->routeIs('showProfiles') ? 'active' : '' }}">
-                    <a href="{{ route('showProfiles') }}" class="nav-link">
-                        <i class="menu-icon fa fa-users"></i> Management Profiles
+                <li class="nav-item {{ request()->routeIs('showRoute') ? 'active' : '' }}">
+                    <a href="{{route('showRoute')}}" class="dropdown-toggle" style="font-size: 13px !important;">
+                        <i class="menu-icon fa fa-users"></i>Follow the route
                     </a>
                 </li>
-
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="menu-icon fa fa-bar-chart"></i> Management Task
-                    </a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li>
-                            <a href="" class="dropdown-item">
-                             Member
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="dropdown-item">
-                              Event
-                            </a>
-                        </li>
-                    </ul>
-                </li>--}}
-
-
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
@@ -104,15 +83,11 @@
                 <div class="user-area dropdown float-right">
                     <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img class="user-avatar rounded-circle" style="width: 40px;height: 40px;object-fit: cover" src="{{ auth()->user()->profile_picture ? asset('storage/' . auth()->user()->profile_picture) : asset('admin_css/images/admin.jpg') }}" alt="User Avatar">
-
                     </a>
 
                     <div class="user-menu dropdown-menu">
-                        <a class="nav-link" href="#"><i class="fa fa-user"></i>My Profile</a>
-
-                        <a class="nav-link" href="{{route('showPageChangePassword')}}"><i class="fa fa-lock"></i>Change password</a>
-
-
+                        <a class="nav-link" href="{{route('showTransporterPageChangeProfile')}}"><i class="fa fa-user"></i>My Profile</a>
+                        <a class="nav-link" href="{{route('showTransporterPageChangePassword')}}"><i class="fa fa-lock"></i>Change password</a>
                         <li>
                             <a href="{{ route('logout') }}"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

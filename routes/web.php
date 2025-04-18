@@ -72,9 +72,31 @@ Route::group(['prefix'=>'individual', 'middleware'=>['isIndividual','auth']], fu
 });
 
 Route::group(['prefix'=>'distributor', 'middleware'=>['isDistributor','auth']], function(){
-    Route::get('/', [distributorController::class, 'index']);
+    Route::get('/', [distributorController::class, 'index'])->name('distributor');
+    Route::post('/add', [distributorController::class, 'handleAddDistributor'])->name('handleAddDistributor');
+    Route::put('/update/{id}', [distributorController::class, 'handleUpdateDistributor'])->name('handleUpdateDistributor');
+    Route::delete('/delete/{id}', [distributorController::class, 'handleDeleteDistributor'])->name('handleDeleteDistributor');
+
+    Route::get('/change-profile',         [distributorController::class, 'showDistributorControllerPageChangeProfile'])->name('showDistributorPageChangeProfile');
+    Route::put('/change-profile/update',  [FarmerController::class, 'changeProfile'])->name('changeDistributorProfile');
+
+    Route::get('/change-password',        [distributorController::class, 'showDistributorPageChangePassword'])->name('showDistributorPageChangePassword');
+    Route::post('/change-password/update',[AdminController::class, 'changePassword'])->name('changeDistributorPassword');
 });
 
 Route::group(['prefix'=>'transporter', 'middleware'=>['isTransporter','auth']], function(){
-    Route::get('/', [transporterController::class, 'index']);
+    Route::get('/', [transporterController::class, 'index'])->name('transporter');
+    Route::post('/add', [transporterController::class, 'handleAddTransporter'])->name('handleAddTransporter');
+    Route::put('/update/{id}', [TransporterController::class, 'update'])->name('update');
+    Route::delete('/delete/{id}', [TransporterController::class, 'destroy'])->name('delete');
+
+
+    Route::get('/route/show', [transporterController::class, 'showRoute'])->name('showRoute');
+
+
+    Route::get('/change-profile',         [TransporterController::class, 'showTransporterPageChangeProfile'])->name('showTransporterPageChangeProfile');
+    Route::put('/change-profile/update',  [FarmerController::class, 'changeProfile'])->name('changeTransporterProfile');
+
+    Route::get('/change-password',        [TransporterController::class, 'showTransporterPageChangePassword'])->name('showTransporterPageChangePassword');
+    Route::post('/change-password/update',[AdminController::class, 'changePassword'])->name('changeTransporterPassword');
 });

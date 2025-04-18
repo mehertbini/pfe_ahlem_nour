@@ -28,7 +28,7 @@ class AdminController extends Controller
             'email'     => 'required|email|unique:users,email',
             'role'      => 'required|in:farmer,transporter,distributor,individual',
             'password'  => 'required|min:8',
-            'phone'  => 'required|max:8|unique:users',
+            'phone'    => 'required|max:8|unique:users,phone',
         ]);
 
         User::create([
@@ -48,16 +48,15 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'role'      => 'required|in:farmer,transporter,distributor,individual',
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'. $id,
+            'role'  => 'required|in:farmer,transporter,distributor,individual',
             'password' => 'nullable|min:8',
-            'phone' => 'nullable|max:8|unique:users',
+            'phone' => 'required|max:8|unique:users,phone,' . $id,
         ]);
-
-        $user->name = $request->name;
+        $user->name  = $request->name;
         $user->email = $request->email;
-        $user->role = $request->role;
+        $user->role  = $request->role;
         $user->phone = $request->phone;
 
         if ($request->password) {
