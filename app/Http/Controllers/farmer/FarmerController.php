@@ -5,7 +5,9 @@ namespace App\Http\Controllers\farmer;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Stock;
+use App\Models\Task;
 use App\Models\User;
+use App\Notifications\TaskCreatedNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,16 +32,15 @@ class FarmerController extends Controller
             'cropName' => 'required|string|max:255',
             'qte' => 'required|numeric|min:1',
             'unite' => 'required|string|max:50',
-            'harvestDate' => 'required|date|after_or_equal:' . now()->subMonths(2)->toDateString(),
+            'harvestDate' => 'required|date',
             'plantDate' => 'required|date|before:harvestDate',
             'health' => 'required|in:Good,Average,Poor',
-        ], [
-            'harvestDate.after_or_equal' => 'The harvest date must be at least 2 months after the plant date.',
         ]);
 
         // Check manually if harvestDate is at least 2 months after plantDate
         $plantDate = Carbon::parse($request->plantDate);
         $harvestDate = Carbon::parse($request->harvestDate);
+
 
         if ($plantDate->diffInMonths($harvestDate) < 2) {
             return redirect()->back()->withErrors(['harvestDate' => 'The harvest date must be at least 2 months after the plant date.']);
@@ -67,11 +68,9 @@ public function handleUpdateStock(Request $request, $id)
         'cropName' => 'required|string|max:255',
         'qte' => 'required|numeric|min:1',
         'unite' => 'required|string|max:50',
-        'harvestDate' => 'required|date|after_or_equal:' . now()->subMonths(2)->toDateString(),
+        'harvestDate' => 'required|date',
         'plantDate' => 'required|date|before:harvestDate',
         'health' => 'required|in:Good,Average,Poor',
-    ], [
-        'harvestDate.after_or_equal' => 'The harvest date must be at least 2 months after the plant date.',
     ]);
 
     // Manual verification of 2-month gap
@@ -281,6 +280,57 @@ public function handleUpdateStock(Request $request, $id)
         }
         $event->delete();
         return redirect()->back()->with('success', 'Event deleted successfully');
+    }
+
+
+
+    public function showTask()
+    {
+        $tasks = Task::latest()->get();
+        return view('farmer.task', compact('tasks'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'number' => 'required|integer',
+            'status' => 'required|in:0,1',
+        ]);
+
+        $task = Task::create($request->all());
+
+        // Notify all users with role 'individual'
+        $individualUsers = User::where('role', 'individual')->get();
+        foreach ($individualUsers as $user) {
+            $user->notify(new TaskCreatedNotification($task));
+        }
+
+        return back()->with('success', 'Task added and individuals notified.');
+    }
+    public function update(Request $request, $id)
+    {
+        $task = Task::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'number' => 'required|integer',
+            'status' => 'required|in:0,1',
+        ]);
+
+        $task->update($request->all());
+
+        return back()->with('success', 'Task updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $task = Task::findOrFail($id);
+        $task->delete();
+
+        return back()->with('success', 'Task deleted successfully.');
     }
 
 

@@ -45,6 +45,11 @@ Route::group(['prefix'=>'farmer', 'middleware'=>['isFarmer','auth']], function()
     Route::put('/member/update/{id}', [FarmerController::class,'handleUpdateMember'])->name('handleUpdateMember');
     Route::get('/member/delete/{id}', [FarmerController::class, 'handleDeleteMember'])->name('handleDeleteMember');
 
+    Route::get('/tasks',              [FarmerController::class, 'showTask'])->name('tasks.index');
+    Route::post('/tasks/add',         [FarmerController::class, 'store'])->name('tasks.store');
+    Route::put('/tasks/update/{id}',  [FarmerController::class, 'update'])->name('tasks.update');
+    Route::get('/tasks/delete/{id}',  [FarmerController::class, 'destroy'])->name('tasks.destroy');
+
     Route::get('/event/show',         [FarmerController::class, 'showEvent'])->name('showEvent');
     Route::post('/event/add',         [FarmerController::class, 'handleAddEvent'])->name('handleAddEvent');
     Route::put('/event/update/{id}',  [FarmerController::class, 'handleUpdateEvent'])->name('handleUpdateEvent');
@@ -68,6 +73,11 @@ Route::group(['prefix'=>'individual', 'middleware'=>['isIndividual','auth']], fu
 
     Route::get('/change-password',        [individualController::class, 'showIndividualPageChangePassword'])->name('showIndividualPageChangePassword');
     Route::post('/change-password/update',[AdminController::class, 'changePassword'])->name('changeIndividualPassword');
+
+    Route::post('/notifications/mark-as-read', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return response()->json(['status' => 'success']);
+    })->name('notifications.markAsRead');
 
 });
 

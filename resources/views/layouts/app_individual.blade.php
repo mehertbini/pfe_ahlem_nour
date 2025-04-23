@@ -19,6 +19,9 @@
 </head>
 
 <body>
+@php
+    $notifications = auth()->user()->unreadNotifications;
+ @endphp
 <!-- Left Panel -->
 <aside id="left-panel" class="left-panel">
     <nav class="navbar navbar-expand-sm navbar-default">
@@ -91,16 +94,24 @@
                     <div class="dropdown for-notification">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-bell"></i>
-                            <span class="count bg-danger">3</span>
+                            <span class="count bg-danger">{{ auth()->user()->unreadNotifications->count() }}</span>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="notification">
-                            <p class="red">You have 3 Notification</p>
-                            <a class="dropdown-item media" href="#">
-                                <i class="fa fa-check"></i>
-                                <p>Server #1 overloaded.</p>
-                            </a>
+                            <p class="red">You have {{ auth()->user()->unreadNotifications->count() }} Notification(s)</p>
+
+                            @forelse(auth()->user()->unreadNotifications as $notification)
+                                <a class="dropdown-item media" href="#">
+                                    <i class="fa fa-check"></i>
+                                    <p>{{ $notification->data['task_name'] ?? 'New Notification' }}</p>
+                                </a>
+                            @empty
+                                <a class="dropdown-item media" href="#">
+                                    <p>No new notifications</p>
+                                </a>
+                            @endforelse
                         </div>
                     </div>
+
                 </div>
 
                 <div class="user-area dropdown float-right">
@@ -172,6 +183,13 @@
 </div>
 <!-- /#right-panel -->
 
+<script>
+    $('#notification').on('click', function() {
+        $.post('{{ route('notifications.markAsRead') }}', {
+            _token: '{{ csrf_token() }}'
+        });
+    });
+</script>
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>

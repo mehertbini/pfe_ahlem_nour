@@ -51,7 +51,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="" class="dropdown-item {{ request()->routeIs('taskRoute') ? 'active' : '' }}">
+                            <a href="{{route('tasks.index')}}" class="dropdown-item {{ request()->routeIs('tasks.index') ? 'active' : '' }}">
                                 Task
                             </a>
                         </li>

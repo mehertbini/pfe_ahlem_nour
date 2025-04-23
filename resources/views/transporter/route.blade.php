@@ -1,46 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Multiple Routes with Leaflet</title>
+    <title>Route Trajectory Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
     <style>
-        #map { height: 600px; }
+        #map { height: 100vh; width: 100%; }
     </style>
 </head>
 <body>
 
-<h2 style="text-align: center;">Two Trajets with Leaflet</h2>
 <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    const map = L.map('map').setView([36.8, 10.18], 12);
+    // Define start and end points directly here
+    const start = { lat: 37.7749, lng: -122.4194 }; // San Francisco
+    const end = { lat: 37.8044, lng: -122.2711 };   // Oakland
 
-    // Base map
+    // Initialize map
+    const map = L.map('map').setView([start.lat, start.lng], 13);
+
+    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Trajet 1 (Example: Tunis to Ariana)
-    const trajet1 = [
-        [36.8065, 10.1815], // Tunis
-        [36.8665, 10.1647]  // Ariana
-    ];
-
-    // Trajet 2 (Example: Tunis to La Marsa)
-    const trajet2 = [
-        [36.8065, 10.1815], // Tunis
-        [36.8915, 10.3311]  // La Marsa
-    ];
-
-    // Draw polyline for Trajet 1 - Red
-    L.polyline(trajet1, {color: 'red'}).addTo(map).bindPopup('Tunis to Ariana');
-
-    // Draw polyline for Trajet 2 - Blue
-    L.polyline(trajet2, {color: 'blue'}).addTo(map).bindPopup('Tunis to La Marsa');
-
-    // Add markers for start points
-    L.marker([36.8065, 10.1815]).addTo(map).bindPopup('Start: Tunis').openPopup();
+    // Draw route using Leaflet Routing Machine
+    L.Routing.control({
+        waypoints: [
+            L.latLng(start.lat, start.lng),
+            L.latLng(end.lat, end.lng)
+        ],
+        routeWhileDragging: false,
+        show: true,
+        draggableWaypoints: false,
+        addWaypoints: false
+    }).addTo(map);
 </script>
 
 </body>
