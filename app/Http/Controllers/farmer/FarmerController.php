@@ -4,6 +4,7 @@ namespace App\Http\Controllers\farmer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\Member;
 use App\Models\Stock;
 use App\Models\Task;
 use App\Models\User;
@@ -179,6 +180,27 @@ public function handleUpdateStock(Request $request, $id)
     }
 
 
+
+    public function confirmUserAndAddToMembers($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        if ($user->role === 'individual') {
+            // Add to members only if not already a member
+            if (!$user->member) {
+                Member::create([
+                    'user_id' => $user->id
+                ]);
+            }
+        }
+
+        $user->save();
+
+        return back()->with('success','User added to members.');
+    }
+
+
+
     public function handleUpdateMember(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -202,14 +224,19 @@ public function handleUpdateStock(Request $request, $id)
     }
     public function handleDeleteMember($id)
     {
-        $user = User::find($id);
+        // Find the member record, not the user record
+        $member = Member::where('user_id', $id)->first(); // Assuming `user_id` links members to users
 
-        if ($user) {
-            $user->delete();
-            return back()->with('success', 'Member deleted successfully.');
+        if (!$member) {
+            return back()->with('error', 'User is not a member and cannot be deleted.');
         }
-        return back()->with('error', 'User not found.');
+
+        // Delete the member
+        $member->delete();
+
+        return back()->with('success', 'Member deleted successfully.');
     }
+
     public function showEvent()
     {
         $events = Event::all();

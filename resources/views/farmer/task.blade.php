@@ -29,7 +29,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
-                            <th>Number</th>
+                            <th>Number of member</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>

@@ -183,7 +183,6 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-
                                     <label for="plantDate">Plant Date</label>
                                     <input type="date" id="plantDate" name="plantDate" class="form-control" value="{{ old('plantDate') }}">
                                     @error('plantDate')

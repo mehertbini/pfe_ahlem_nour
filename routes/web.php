@@ -41,6 +41,7 @@ Route::group(['prefix'=>'farmer', 'middleware'=>['isFarmer','auth']], function()
     Route::put('/stock/update/{id}', [FarmerController::class,'handleUpdateStock'])->name('handleUpdateStock');
     Route::get('/stock/delete/{id}', [FarmerController::class, 'handleDeleteStock'])->name('handleDeleteStock');
 
+    Route::post('/member/{id}/confirm',[FarmerController::class, 'confirmUserAndAddToMembers'])->name('confirmUserAndAddToMembers');
     Route::get('/member/show',        [FarmerController::class, 'showMember'])->name('showMember');
     Route::put('/member/update/{id}', [FarmerController::class,'handleUpdateMember'])->name('handleUpdateMember');
     Route::get('/member/delete/{id}', [FarmerController::class, 'handleDeleteMember'])->name('handleDeleteMember');
@@ -101,7 +102,14 @@ Route::group(['prefix'=>'transporter', 'middleware'=>['isTransporter','auth']], 
     Route::delete('/delete/{id}', [TransporterController::class, 'destroy'])->name('delete');
 
 
-    Route::get('/route/show', [transporterController::class, 'showRoute'])->name('showRoute');
+    Route::get('/trip/show', [transporterController::class, 'showRoute'])->name('showRoute');
+    Route::post('/add-trip', [transporterController::class, 'handleAddTrip'])->name('handleAddTrip');
+    Route::put('routes/{id}', [transporterController::class, 'handleUpdateRoute'])->name('handleUpdateRoute');
+    Route::delete('routes/{id}', [transporterController::class, 'destroyRoute'])->name('destroyRoute');
+
+    Route::get('/trip/{id}/map', [transporterController::class, 'showMap'])->name('showMap');
+
+
 
 
     Route::get('/change-profile',         [TransporterController::class, 'showTransporterPageChangeProfile'])->name('showTransporterPageChangeProfile');

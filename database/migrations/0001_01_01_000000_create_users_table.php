@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('status')->default(0);
             $table->string('phone')->nullable();
             $table->string('profile_picture')->nullable();
-            $table->string('role')->default('user');
+            $table->string('role')->default('farmer');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

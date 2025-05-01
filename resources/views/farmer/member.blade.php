@@ -39,27 +39,45 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
+                                    <th>member</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($membres as $member)
                                     <tr>
+
                                         <td>{{ $member->name }}</td>
                                         <td>{{ $member->email }}</td>
                                         <td>
-                                            <!-- Edit Button -->
-                                            <button class="btn btn-sm btn-outline-primary" data-toggle="modal"
-                                                    data-target="#editUser{{ $member->id }}">
-                                                <i class="fa fa-edit"></i> Edit
-                                            </button>
-
-                                            <!-- Delete Button -->
-                                            <a href="{{ route('handleDeleteMember', $member->id) }}" class="btn btn-sm btn-outline-danger"
-                                               onclick="return confirm('Are you sure you want to delete this user {{ $member->name }}?');">
-                                                <i class="fa fa-trash"></i> Delete
-                                            </a>
+                                            <form action="{{ route('confirmUserAndAddToMembers', $member->id) }}" method="POST">
+                                                @csrf
+                                                @method('POST')
+                                                <button type="submit"
+                                                        class="btn btn-sm
+                                                        {{ $member->member ? 'btn-secondary' : 'btn-success' }}"
+                                                        {{ $member->member ? 'disabled' : '' }}>
+                                                        {{ $member->member ? 'Added to Members' : 'Add to Members' }}
+                                                </button>
+                                            </form>
                                         </td>
+
+                                        <td>
+                                            @if($member->member)
+                                                <!-- Edit Button -->
+                                                <button class="btn btn-sm btn-outline-primary" data-toggle="modal"
+                                                        data-target="#editUser{{ $member->id }}">
+                                                    <i class="fa fa-edit"></i> Edit
+                                                </button>
+
+                                                <!-- Delete Button -->
+                                                <a href="{{ route('handleDeleteMember', $member->id) }}" class="btn btn-sm btn-outline-danger"
+                                                   onclick="return confirm('Are you sure you want to delete this member {{ $member->name }}?');">
+                                                    <i class="fa fa-trash"></i> Delete
+                                                </a>
+                                            @endif
+                                        </td>
+
                                     </tr>
 
                                     <!-- Edit User Modal -->
