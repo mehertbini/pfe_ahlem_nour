@@ -5,6 +5,7 @@ namespace App\Http\Controllers\farmer;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Member;
+use App\Models\Project;
 use App\Models\Stock;
 use App\Models\Task;
 use App\Models\User;
@@ -21,6 +22,7 @@ class FarmerController extends Controller
     {
         return view('farmer.index');
     }
+
     public function showStocks()
     {
         $stocks = Stock::latest()->get();
@@ -224,23 +226,27 @@ public function handleUpdateStock(Request $request, $id)
     }
     public function handleDeleteMember($id)
     {
-        // Find the member record, not the user record
-        $member = Member::where('user_id', $id)->first(); // Assuming `user_id` links members to users
+        $member = Member::where('user_id', $id)->first();
 
         if (!$member) {
-            return back()->with('error', 'User is not a member and cannot be deleted.');
+            return back()->with('error', 'This user is not registered as a member and cannot be deleted.');
         }
+        $assignedToProject = Project::whereJsonContains('id_individual', (string) $id)->exists();
 
-        // Delete the member
+        if ($assignedToProject) {
+            return back()->with('error', 'This member cannot be deleted because they are assigned to at least one project. Please unassign them before proceeding.');
+        }
         $member->delete();
 
         return back()->with('success', 'Member deleted successfully.');
     }
 
+
     public function showEvent()
     {
+        $projects = Project::all();
         $events = Event::all();
-        return view('farmer.event',compact('events'));
+        return view('farmer.event',compact('events','projects'));
     }
 
     public function handleAddEvent(Request $request)
@@ -252,7 +258,11 @@ public function handleUpdateStock(Request $request, $id)
             'attribute_date' => 'required|date',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
+            'project_id' => 'required|exists:projects,id',
+            'individuals' => 'required|array',
+            'individuals.*' => 'exists:users,id',
         ]);
+
 
         $event = new Event();
         $event->name = $request->name;
@@ -260,6 +270,8 @@ public function handleUpdateStock(Request $request, $id)
         $event->date_attribute = $request->attribute_date;
         $event->start_date = $request->start_date;
         $event->end_date = $request->end_date;
+        $event->project_id = $request->project_id;
+        $event->individual_ids = json_encode($request->individuals);
 
         if ($request->hasFile('picture')) {
             $imagePath = $request->file('picture')->store('events', 'public');
@@ -280,21 +292,28 @@ public function handleUpdateStock(Request $request, $id)
             'date_attribute' => 'required|date',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
+            'project_id' => 'required|exists:projects,id',
+            'individuals' => 'nullable|array',
+            'individuals.*' => 'exists:users,id',
         ]);
-        $event = Event::find($id);
 
-        $event->name = $request->name;
-        $event->description = $request->description;
-        $event->date_attribute = $request->date_attribute;
-        $event->start_date = $request->start_date;
-        $event->end_date = $request->end_date;
+        $event = Event::findOrFail($id);
+
+        $event->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'date_attribute' => $request->date_attribute,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'project_id' => $request->project_id,
+            'individual_ids' => $request->individuals ?? [],
+        ]);
 
         if ($request->hasFile('picture')) {
             $imagePath = $request->file('picture')->store('events', 'public');
             $event->picture = $imagePath;
+            $event->save();
         }
-
-        $event->save();
 
         return redirect()->back()->with('success', 'Event updated successfully');
     }
@@ -313,29 +332,61 @@ public function handleUpdateStock(Request $request, $id)
 
     public function showTask()
     {
+        $projects = Project::all();
         $tasks = Task::latest()->get();
-        return view('farmer.task', compact('tasks'));
+
+        return view('farmer.task', compact('projects', 'tasks'));
+    }
+
+    public function getProjectIndividuals($id)
+    {
+        $project = Project::findOrFail($id);
+
+
+        // Decode JSON to array
+        $ids = json_decode($project->id_individual, true) ?? [];
+
+        // Fetch only those users with role=individual and who exist in the project
+        $individuals = User::where('role', 'individual')
+            ->whereIn('id', $ids)
+            ->get(['id', 'name', 'email']); // only needed fields
+
+        return response()->json($individuals);
     }
 
     public function store(Request $request)
     {
+        // Validate the request data
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'number' => 'required|integer',
             'status' => 'required|in:0,1',
+            'project_id' => 'required|exists:projects,id',
+            'individuals' => 'required|array',
+            'individuals.*' => 'exists:users,id',
         ]);
 
-        $task = Task::create($request->all());
+        // Store the task
+        $task = Task::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'number' => $request->number,
+            'status' => $request->status,
+            'project_id' => $request->project_id,
+            // Use json_encode to store the array as a JSON string
+            'individual_ids' => json_encode($request->individuals),
+        ]);
 
-        // Notify all users with role 'individual'
-        $individualUsers = User::where('role', 'individual')->get();
-        foreach ($individualUsers as $user) {
+        // Notify only the assigned individuals
+        $assignedUsers = User::whereIn('id', $request->individuals)->get();
+        foreach ($assignedUsers as $user) {
             $user->notify(new TaskCreatedNotification($task));
         }
 
-        return back()->with('success', 'Task added and individuals notified.');
+        return back()->with('success', 'Task created and assigned individuals notified.');
     }
+
     public function update(Request $request, $id)
     {
         $task = Task::findOrFail($id);
@@ -359,6 +410,79 @@ public function handleUpdateStock(Request $request, $id)
 
         return back()->with('success', 'Task deleted successfully.');
     }
+
+    public function showProject()
+    {
+        // Get all projects
+        $projects = Project::all();
+
+        // Decode JSON field for each project
+        foreach ($projects as $project) {
+            $project->id_individual = json_decode($project->id_individual, true) ?? [];
+        }
+
+        // Get only individual users that exist in member table
+        $individuals = User::where('role', 'individual')
+            ->whereHas('member') // only those who have a related member
+            ->get();
+        return view('farmer.project', compact('projects', 'individuals'));
+    }
+
+
+    public function handleAddProject(Request $request)
+    {
+        $request->validate([
+            'name'        => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_date'  => 'required|date',
+            'end_date'    => 'required|date|after_or_equal:start_date',
+            'id_individual' => 'nullable|array', // Optional JSON array
+        ]);
+
+        Project::create([
+            'name'         => $request->name,
+            'description'  => $request->description,
+            'start_date'   => $request->start_date,
+            'end_date'     => $request->end_date,
+            'id_individual'=> $request->id_individual ? json_encode($request->id_individual) : null,
+        ]);
+
+        return redirect()->back()->with('success', 'Project added successfully.');
+    }
+
+    public function handleUpdateProject(Request $request, $id)
+    {
+
+        $request->validate([
+            'name'        => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_date'  => 'required|date',
+            'end_date'    => 'required|date|after_or_equal:start_date',
+            'status'      => 'required|integer|in:0,1,2',
+            'id_individual' => 'nullable|array',
+        ]);
+
+        $project = Project::findOrFail($id);
+
+        $project->update([
+            'name'         => $request->name,
+            'description'  => $request->description,
+            'start_date'   => $request->start_date,
+            'end_date'     => $request->end_date,
+            'status'       => $request->status,
+            'id_individual'=> $request->id_individual ? json_encode($request->id_individual) : null,
+        ]);
+
+        return redirect()->back()->with('success', 'Project updated successfully.');
+    }
+
+    public function handleDeleteProject($id)
+    {
+        $project = Project::findOrFail($id);
+        $project->delete();
+        return redirect()->back()->with('success', 'Project deleted successfully.');
+    }
+
 
 
 

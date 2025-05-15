@@ -2,6 +2,8 @@
 
 @section('content')
     <link rel="stylesheet" href="{{ asset('admin_css/assets/css/lib/datatable/dataTables.bootstrap.min.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 
     <div class="breadcrumbs">
         <div class="breadcrumbs-inner">
@@ -118,6 +120,21 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
+                            <label>Project</label>
+                            <select id="projectSelect" class="form-control" name="project_id" required>
+                                <option value="">-- Select Project --</option>
+                                @foreach ($projects as $project)
+                                    <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Assign Individuals</label>
+                            <select id="individualSelect" name="individuals[]" class="form-control" multiple required></select>
+                        </div>
+
+                        <div class="form-group">
                             <label>Task Name</label>
                             <input type="text" name="name" class="form-control" required>
                         </div>
@@ -145,5 +162,48 @@
             </form>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Initialize Select2
+            $('#individualSelect').select2({
+                placeholder: 'Select individuals',
+                allowClear: true,
+                width: '100%'
+            });
+
+            const individualUrlTemplate = "{{ route('getProjectIndividuals', ['id' => ':id']) }}";
+
+            $('#projectSelect').on('change', function () {
+                let projectId = $(this).val();
+
+                // Clear and reset the select
+                $('#individualSelect').empty().trigger('change');
+
+                if (projectId) {
+                    const url = individualUrlTemplate.replace(':id', projectId);
+
+                    $.get(url, function (data) {
+                        if (data.length > 0) {
+                            data.forEach(function (user) {
+                                let newOption = new Option(`${user.name} (${user.email})`, user.id, false, false);
+                                $('#individualSelect').append(newOption);
+                            });
+
+                            // Refresh Select2 with new options
+                            $('#individualSelect').trigger('change');
+                        } else {
+                            alert('No individuals assigned to this project.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+
 
 @endsection

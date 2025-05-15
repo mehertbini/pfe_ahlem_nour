@@ -1,6 +1,7 @@
 @extends('layouts.app_farmer')
 @section('content')
     <link rel="stylesheet" href="{{ asset('admin_css/assets/css/lib/datatable/dataTables.bootstrap.min.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <div class="breadcrumbs">
         <div class="breadcrumbs-inner">
@@ -80,8 +81,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
                                     <div class="modal fade" id="editEvent{{ $event->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
@@ -95,6 +94,25 @@
                                                     <form action="{{ route('handleUpdateEvent', $event->id) }}" method="POST" enctype="multipart/form-data">
                                                         @csrf
                                                         @method('PUT')
+
+                                                        <div class="form-group">
+                                                            <label>Project</label>
+                                                            <select id="eventProjectSelectEdit{{ $event->id }}" class="form-control" name="project_id" required>
+                                                                <option value="">-- Select Project --</option>
+                                                                @foreach($projects as $project)
+                                                                    <option value="{{ $project->id }}" {{ $event->project_id == $project->id ? 'selected' : '' }}>{{ $project->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label>Individuals</label>
+                                                            <select id="eventIndividualSelectEdit{{ $event->id }}" name="individuals[]" class="form-control" multiple required>
+                                                                @foreach($event->project ? $event->project->users : [] as $user)
+                                                                <option value="{{ $user->id }}" {{ in_array($user->id, $event->users->pluck('id')->toArray()) ? 'selected' : '' }}>{{ $user->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
 
                                                         <div class="form-group">
                                                             <label>Name</label>
@@ -159,6 +177,22 @@
                 <form action="{{ route('handleAddEvent') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Project</label>
+                                <select id="eventProjectSelect" class="form-control" name="project_id" required>
+                                    <option value="">-- Select Project --</option>
+                                    @foreach ($projects as $project)
+                                        <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Assign Individuals</label>
+                                <select id="eventIndividualSelect" name="individuals[]" class="form-control" multiple required></select>
+                            </div>
+
                         <div class="mb-3">
                             <label for="name" class="form-label">Event Name</label>
                             <input type="text" class="form-control" id="name" name="name" required>
@@ -199,3 +233,77 @@
     </div>
 
 @endsection
+
+<!-- Include jQuery and Select2 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#eventIndividualSelect').select2({
+            placeholder: 'Select individuals',
+            allowClear: true,
+            width: '100%'
+        });
+
+        const eventIndividualUrlTemplate = "{{ route('getProjectIndividuals', ['id' => ':id']) }}";
+
+        $('#eventProjectSelect').on('change', function () {
+            let projectId = $(this).val();
+
+            $('#eventIndividualSelect').empty().trigger('change');
+
+            if (projectId) {
+                const url = eventIndividualUrlTemplate.replace(':id', projectId);
+
+                $.get(url, function (data) {
+                    if (data.length > 0) {
+                        data.forEach(function (user) {
+                            let newOption = new Option(`${user.name} (${user.email})`, user.id, false, false);
+                            $('#eventIndividualSelect').append(newOption);
+                        });
+                        $('#eventIndividualSelect').trigger('change');
+                    } else {
+                        alert('No individuals assigned to this project.');
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        const urlTemplate = "{{ route('getProjectIndividuals', ['id' => ':id']) }}";
+
+        @foreach($events as $event)
+        $('#eventIndividualSelectEdit{{ $event->id }}').select2({
+            placeholder: 'Select individuals',
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#eventProjectSelectEdit{{ $event->id }}').on('change', function () {
+            let projectId = $(this).val();
+            let select = $('#eventIndividualSelectEdit{{ $event->id }}');
+            select.empty().trigger('change');
+
+            if (projectId) {
+                const url = urlTemplate.replace(':id', projectId);
+                $.get(url, function (data) {
+                    if (data.length > 0) {
+                        data.forEach(function (user) {
+                            let newOption = new Option(`${user.name} (${user.email})`, user.id, false, false);
+                            select.append(newOption);
+                        });
+                        select.trigger('change');
+                    } else {
+                        alert('No individuals assigned to this project.');
+                    }
+                });
+            }
+        });
+        @endforeach
+    });
+</script>
+

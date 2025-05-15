@@ -41,6 +41,11 @@
                     </a>
                     <ul class="sub-menu children dropdown-menu">
                         <li>
+                            <a href="{{ route('showProject') }}" class="dropdown-item {{ request()->routeIs('showProject') ? 'active' : '' }}">
+                                List of project
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ route('showMember') }}" class="dropdown-item {{ request()->routeIs('showMember') ? 'active' : '' }}">
                                 Member
                             </a>

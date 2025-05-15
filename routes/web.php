@@ -51,10 +51,20 @@ Route::group(['prefix'=>'farmer', 'middleware'=>['isFarmer','auth']], function()
     Route::put('/tasks/update/{id}',  [FarmerController::class, 'update'])->name('tasks.update');
     Route::get('/tasks/delete/{id}',  [FarmerController::class, 'destroy'])->name('tasks.destroy');
 
+    // web.php
+    Route::get('/projects/{id}/individuals', [FarmerController::class, 'getProjectIndividuals'])->name('getProjectIndividuals');
+
+
     Route::get('/event/show',         [FarmerController::class, 'showEvent'])->name('showEvent');
     Route::post('/event/add',         [FarmerController::class, 'handleAddEvent'])->name('handleAddEvent');
     Route::put('/event/update/{id}',  [FarmerController::class, 'handleUpdateEvent'])->name('handleUpdateEvent');
     Route::get('/event/delete/{id}',  [FarmerController::class, 'handleDeleteEvent'])->name('handleDeleteEvent');
+
+
+    Route::get('/project/show',      [FarmerController::class, 'showProject'])->name('showProject');
+    Route::post('/project/add/',     [FarmerController::class, 'handleAddProject'])->name('handleAddProject');
+    Route::put('/project/update/{id}',[FarmerController::class, 'handleUpdateProject'])->name('handleUpdateProject');
+    Route::delete('/project/delete/{id}',[FarmerController::class, 'handleDeleteProject'])->name('handleDeleteProject');
 
 
 
@@ -75,9 +85,11 @@ Route::group(['prefix'=>'individual', 'middleware'=>['isIndividual','auth']], fu
     Route::get('/change-password',        [individualController::class, 'showIndividualPageChangePassword'])->name('showIndividualPageChangePassword');
     Route::post('/change-password/update',[AdminController::class, 'changePassword'])->name('changeIndividualPassword');
 
-    Route::post('/notifications/mark-as-read', function () {
+    Route::get('/individual/tasks-by-project', [IndividualController::class, 'getTasksByProject'])->name('getTasksByProject');
+
+    Route::get('/notifications/mark-as-read', function () {
         auth()->user()->unreadNotifications->markAsRead();
-        return response()->json(['status' => 'success']);
+        return back();
     })->name('notifications.markAsRead');
 
 });

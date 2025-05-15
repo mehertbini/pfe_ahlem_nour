@@ -19,6 +19,8 @@ return new class extends Migration
             $table->date('date_attribute');
             $table->date('start_date');
             $table->date('end_date');
+            $table->unsignedBigInteger('project_id')->nullable();
+            $table->json('individual_ids')->nullable(); // optional
             $table->timestamps();
         });
     }

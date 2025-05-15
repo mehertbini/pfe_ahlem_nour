@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->integer('status')->default(0); //0 pending //1 progress  // 2 completed
             $table->text('description');
-            $table->integer('number');
-            $table->integer('status')->default(0);
-            $table->unsignedBigInteger('project_id')->nullable();
-            $table->json('individual_ids')->nullable(); // optional
+            $table->json('id_individual')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('projects');
     }
 };
