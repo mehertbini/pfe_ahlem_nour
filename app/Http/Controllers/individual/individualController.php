@@ -12,6 +12,10 @@ class individualController extends Controller
 {
     public function index()
     {
+        return view('individual.index');
+    }
+    public function listOfProject()
+    {
         $user = Auth::user();
 
         if ($user->role !== 'individual') {
@@ -23,7 +27,7 @@ class individualController extends Controller
                 $query->whereJsonContains('individual_ids',(string)$user->id);
             }])
             ->get();
-        return view('individual.index', compact('projects'));
+        return view('individual.list-project', compact('projects'));
     }
 
 

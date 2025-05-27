@@ -19,6 +19,10 @@
 </head>
 
 <body>
+@php
+    $numberTransporter = \App\Models\Transporter::count();
+    $numberTrajet = \App\Models\Trajet::count();
+@endphp
 <!-- Left Panel -->
 <aside id="left-panel" class="left-panel">
     <nav class="navbar navbar-expand-sm navbar-default">
@@ -27,7 +31,12 @@
                 <li class="menu-title">Welcome {{ Auth::user()->role ?? "user" }}</li>
 
                 <li class="menu-item {{ request()->routeIs('transporter') ? 'active' : '' }}">
-                    <a href="{{route('transporter')}}" class="dropdown-toggle" style="font-size: 13px !important;">
+                    <a href="{{url('transporter')}}" class="dropdown-toggle" style="font-size: 13px !important;">
+                        <i class="menu-icon fa fa-bar-chart"></i>Management Statistic
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('show') ? 'active' : '' }}">
+                    <a href="{{route('show')}}" class="dropdown-toggle" style="font-size: 13px !important;">
                         <i class="menu-icon fa fa-bar-chart"></i>Management Transporter
                     </a>
                 </li>
@@ -49,7 +58,7 @@
     <header id="header" class="header">
         <div class="top-left">
             <div class="navbar-header">
-                <a class="navbar-brand" href="{{url('/farmer')}}"><img src="{{asset('admin_css/images/logo.png')}}" alt="Logo"></a>
+                <a class="navbar-brand" href="{{url('transporter')}}"><img src="{{asset('admin_css/images/logo.png')}}" alt="Logo"></a>
                 <a class="navbar-brand hidden" href="./"><img src="{{asset('admin_css/images/logo2.png')}}" alt="Logo"></a>
                 <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
             </div>
@@ -154,5 +163,53 @@
 <script src="{{asset('admin_css/assets/js/main.js')}}"></script>
 
 
+<script>
+    const transporterCount = {{ $numberTransporter }};
+    const trajetCount = {{ $numberTrajet }};
+
+    // Transporter Chart
+    new Chart(document.getElementById("transporterChart"), {
+        type: 'doughnut',
+        data: {
+            labels: ["Transporters"],
+            datasets: [{
+                data: [transporterCount], // use small number for empty segment
+                backgroundColor: [
+                    "rgba(54, 162, 235, 0.9)",   // blue
+                    "rgba(200, 200, 200, 0.3)"   // gray (dummy)
+                ]
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Trajet Chart
+    new Chart(document.getElementById("trajetChart"), {
+        type: 'doughnut',
+        data: {
+            labels: ["Trajets"],
+            datasets: [{
+                data: [trajetCount],
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.9)",    // red
+                    "rgba(200, 200, 200, 0.3)"    // gray
+                ]
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
 </body>
 </html>

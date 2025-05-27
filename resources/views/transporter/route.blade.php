@@ -1,4 +1,4 @@
-@extends('layouts.app_farmer')
+@extends('layouts.app_transporter')
 @section('content')
     <div class="breadcrumbs">
         <div class="breadcrumbs-inner">

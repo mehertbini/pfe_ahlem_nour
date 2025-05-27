@@ -78,6 +78,7 @@ Route::group(['prefix'=>'farmer', 'middleware'=>['isFarmer','auth']], function()
 
 Route::group(['prefix'=>'individual', 'middleware'=>['isIndividual','auth']], function(){
     Route::get('/', [individualController::class, 'index']);
+    Route::get('/list/project', [individualController::class, 'listOfProject'])->name('listOfProject');
 
     Route::get('/change-profile',         [individualController::class, 'showIndividualPageChangeProfile'])->name('showIndividualPageChangeProfile');
     Route::put('/change-profile/update',  [FarmerController::class, 'changeProfile'])->name('changeIndividualProfile');
@@ -108,7 +109,8 @@ Route::group(['prefix'=>'distributor', 'middleware'=>['isDistributor','auth']], 
 });
 
 Route::group(['prefix'=>'transporter', 'middleware'=>['isTransporter','auth']], function(){
-    Route::get('/', [transporterController::class, 'index'])->name('transporter');
+    Route::get('/', [transporterController::class, 'index']);
+    Route::get('/show', [transporterController::class, 'show'])->name('show');
     Route::post('/add', [transporterController::class, 'handleAddTransporter'])->name('handleAddTransporter');
     Route::put('/update/{id}', [TransporterController::class, 'update'])->name('update');
     Route::delete('/delete/{id}', [TransporterController::class, 'destroy'])->name('delete');

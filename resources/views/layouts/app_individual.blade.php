@@ -20,7 +20,13 @@
 
 <body>
 @php
-    $notifications = auth()->user()->unreadNotifications;
+    use App\Models\Task;
+    use App\Models\Event;
+
+       $notifications = auth()->user()->unreadNotifications;
+       $userId = auth()->id();
+       $taskCount = Task::whereJsonContains('individual_ids', (string) $userId)->count();
+       $eventCount = Event::whereJsonContains('individual_ids', (string) $userId)->count();
  @endphp
 <!-- Left Panel -->
 <aside id="left-panel" class="left-panel">
@@ -32,6 +38,12 @@
 
                 <li class="menu-item {{ request()->routeIs('individual') ? 'active' : '' }}">
                     <a href="{{url('/individual')}}" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-bar-chart"></i>Management statistic
+                    </a>
+                </li>
+
+                <li class="menu-item {{ request()->routeIs('listOfProject') ? 'active' : '' }}">
+                    <a href="{{route('listOfProject')}}" class="dropdown-toggle">
                         <i class="menu-icon fa fa-bar-chart"></i>List of project
                     </a>
                 </li>
@@ -158,6 +170,8 @@
 </div>
 <!-- /#right-panel -->
 
+
+
 <script>
     $('#notification').on('click', function() {
         $.post('{{ route('notifications.markAsRead') }}', {
@@ -165,14 +179,62 @@
         });
     });
 </script>
-<!-- Scripts -->
+
+<!-- Chart.js and other scripts -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
 <script src="{{asset('admin_css/assets/js/main.js')}}"></script>
+<script>
+    const taskCount = {{ $taskCount }};
+    const eventCount = {{ $eventCount }};
 
+    // Transporter Chart
+    new Chart(document.getElementById("taskChart"), {
+        type: 'doughnut',
+        data: {
+            labels: ["Task(s)"],
+            datasets: [{
+                data: [taskCount], // use small number for empty segment
+                backgroundColor: [
+                    "rgba(54, 162, 235, 0.9)",   // blue
+                    "rgba(200, 200, 200, 0.3)"   // gray (dummy)
+                ]
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Trajet Chart
+    new Chart(document.getElementById("eventChart"), {
+        type: 'doughnut',
+        data: {
+            labels: ["Event(s)"],
+            datasets: [{
+                data: [eventCount],
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.9)",    // red
+                    "rgba(200, 200, 200, 0.3)"    // gray
+                ]
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>

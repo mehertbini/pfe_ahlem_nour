@@ -13,10 +13,14 @@ class transporterController extends Controller
 {
     public function index()
     {
-        $datas = Transporter::all();
-        return view('transporter.index',compact('datas'));
+        return view('transporter.index');
     }
 
+    public function show()
+    {
+        $datas = Transporter::all();
+        return view('transporter.transporter',compact('datas'));
+    }
     public function handleAddTransporter(Request $request)
     {
         // Validate the incoming data

@@ -14,11 +14,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.min.css">
     <link rel="stylesheet" href="{{asset('admin_css/assets/css/cs-skin-elastic.css')}}">
     <link rel="stylesheet" href="{{asset('admin_css/assets/css/style.css')}}">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.css" rel="stylesheet">
 </head>
 
 <body>
+@php
+    $pending = \App\Models\Project::where('status', 0)->count();
+    $inProgress = \App\Models\Project::where('status', 1)->count();
+    $completed = \App\Models\Project::where('status', 2)->count();
+  use Illuminate\Support\Facades\DB;
+
+            $query = DB::table('stocks')
+                ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(qte) as total_quantity'));
+
+            if (request('year')) {
+                $query->whereYear('created_at', request('year'));
+            }
+
+            if (request('month')) {
+                $query->whereMonth('created_at', request('month'));
+            }
+
+            if (request('week') && request('year') && request('month')) {
+                $startOfMonth = \Carbon\Carbon::create(request('year'), request('month'), 1);
+
+            }
+
+            $statistics = $query->groupBy(DB::raw('DATE(created_at)'))
+                                ->orderBy(DB::raw('DATE(created_at)'))
+                                ->get();
+
+            $dates = $statistics->pluck('date')->toArray();
+            $quantities = $statistics->pluck('total_quantity')->toArray();
+
+@endphp
 <!-- Left Panel -->
 <aside id="left-panel" class="left-panel">
     <nav class="navbar navbar-expand-sm navbar-default">
@@ -27,6 +56,11 @@
             <ul class="nav navbar-nav">
                 <li class="menu-title">Welcome {{ Auth::user()->role ?? "user" }}</li>
 
+                <li>
+                    <a href="{{ url('farmer') }}" class="dropdown-item {{ request()->routeIs('farmer') ? 'active' : '' }}">
+                        <i class="menu-icon fa fa-bar-chart"></i>  Management statistic
+                    </a>
+                </li>
                 <li class="menu-item {{ request()->routeIs('showStocks') ? 'active' : '' }}">
                     <a href="{{ route('showStocks') }}" class="dropdown-toggle">
                         <i class="menu-icon fa fa-bar-chart"></i>Management Stocks
@@ -40,6 +74,7 @@
                         <i class="menu-icon fa fa-bar-chart"></i> Management Project
                     </a>
                     <ul class="sub-menu children dropdown-menu">
+
                         <li>
                             <a href="{{ route('showProject') }}" class="dropdown-item {{ request()->routeIs('showProject') ? 'active' : '' }}">
                                 List of project
@@ -186,7 +221,73 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
 <script src="{{asset('admin_css/assets/js/main.js')}}"></script>
+<script>
+    const pending = {{ $pending }};
+    const inProgress = {{ $inProgress }};
+    const completed = {{ $completed }};
+</script>
+<script>
+    //doughut chart
+    var ctx = document.getElementById( "doughutChart1" );
+    ctx.height = 150;
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ["Pending", "In Progress", "Completed"],
+            datasets: [{
+                data: [pending, inProgress, completed],
+                backgroundColor: [
+                    "rgba(255, 206, 86, 0.9)",   // Pending - yellow
+                    "rgba(75, 192, 192, 0.9)",   // In Progress - teal
+                    "rgba(0, 194, 146, 0.9)"     // Completed - green
+                ],
+                hoverBackgroundColor: [
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(0, 194, 146, 1)"
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    var ctx = document.getElementById("doughutChart2");
+    ctx.height = 150;
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: @json($dates),
+            datasets: [{
+                label: "Quantité produits",
+                data: @json($quantities),
+                backgroundColor: "rgba(0, 194, 146, 0.5)",
+                borderColor: "rgba(0, 194, 146, 0.9)",
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                text: 'Quantité produits filtrée'
+            }
+        }
+    });
 
 
+</script>
 </body>
 </html>
