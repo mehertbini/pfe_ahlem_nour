@@ -46,7 +46,7 @@ Route::group(['prefix'=>'farmer', 'middleware'=>['isFarmer','auth']], function()
     Route::put('/member/update/{id}', [FarmerController::class,'handleUpdateMember'])->name('handleUpdateMember');
     Route::get('/member/delete/{id}', [FarmerController::class, 'handleDeleteMember'])->name('handleDeleteMember');
 
-    Route::get('/tasks',              [FarmerController::class, 'showTask'])->name('tasks.index');
+    Route::get('/tasks',              [FarmerController::class, 'showTask'])->name('tasks.index.blade.php');
     Route::post('/tasks/add',         [FarmerController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/update/{id}',  [FarmerController::class, 'update'])->name('tasks.update');
     Route::get('/tasks/delete/{id}',  [FarmerController::class, 'destroy'])->name('tasks.destroy');
@@ -97,9 +97,16 @@ Route::group(['prefix'=>'individual', 'middleware'=>['isIndividual','auth']], fu
 
 Route::group(['prefix'=>'distributor', 'middleware'=>['isDistributor','auth']], function(){
     Route::get('/', [distributorController::class, 'index'])->name('distributor');
-    Route::post('/add', [distributorController::class, 'handleAddDistributor'])->name('handleAddDistributor');
-    Route::put('/update/{id}', [distributorController::class, 'handleUpdateDistributor'])->name('handleUpdateDistributor');
-    Route::delete('/delete/{id}', [distributorController::class, 'handleDeleteDistributor'])->name('handleDeleteDistributor');
+    Route::get('/sales', [distributorController::class, 'sales'])->name('sales');
+    Route::post('/add', [distributorController::class, 'handleDistributorAddProduct'])->name('handleDistributorAddProduct');
+    Route::delete('/delete/{id}', [distributorController::class, 'handleDistributorDeleteProduct'])->name('handleDistributorDeleteProduct');
+
+    Route::get('/purchases', [distributorController::class, 'purchase'])->name('purchases.index');
+    Route::post('/purchases/add', [distributorController::class, 'storePurchase'])->name('purchases.store');
+    Route::get('/purchases/{purchase}', [distributorController::class, 'show'])->name('purchases.show');
+    Route::delete('/purchases/{purchase}', [distributorController::class, 'destroy'])->name('purchases.destroy');
+    Route::get('/purchases/print/{purchase}', [distributorController::class, 'print'])->name('purchases.print');
+
 
     Route::get('/change-profile',         [distributorController::class, 'showDistributorControllerPageChangeProfile'])->name('showDistributorPageChangeProfile');
     Route::put('/change-profile/update',  [FarmerController::class, 'changeProfile'])->name('changeDistributorProfile');

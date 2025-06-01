@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->string('name_product');
-            $table->integer('quantity');
-            $table->decimal('price');
-            $table->date('date_sale');
+            $table->string('type_invoice');
+            $table->string('name_customer');
+            $table->json('product_ids');
+            $table->integer('status');
             $table->timestamps();
         });
     }

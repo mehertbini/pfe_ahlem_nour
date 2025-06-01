@@ -13,7 +13,7 @@ class transporterController extends Controller
 {
     public function index()
     {
-        return view('transporter.index');
+        return view('transporter.index.blade.php');
     }
 
     public function show()

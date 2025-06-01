@@ -15,8 +15,14 @@
     <link rel="stylesheet" href="{{asset('admin_css/assets/css/cs-skin-elastic.css')}}">
     <link rel="stylesheet" href="{{asset('admin_css/assets/css/style.css')}}">
 
-
 </head>
+
+@php
+    use App\Models\Purchase;
+
+     $salesCount = Purchase::where('type_invoice', 'vente')->count();
+     $buyCount = Purchase::where('type_invoice', 'achat')->count();
+@endphp
 
 <body>
 <!-- Left Panel -->
@@ -29,12 +35,18 @@
 
                 <li class="menu-item {{ request()->routeIs('distributor') ? 'active' : '' }}">
                     <a href="{{route('distributor')}}" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-bar-chart"></i>Management Statistic
+                    </a>
+                </li>
+
+                <li class="menu-item {{ request()->routeIs('sales') ? 'active' : '' }}">
+                    <a href="{{route('sales')}}" class="dropdown-toggle">
                         <i class="menu-icon fa fa-bar-chart"></i>Management sales
                     </a>
                 </li>
 
-                <li class="nav-item {{ request()->routeIs('showProfiles') ? 'active' : '' }}">
-                    <a href="" class="dropdown-toggle">
+                <li class="nav-item {{ request()->routeIs('purchases.index') ? 'active' : '' }}">
+                    <a href="{{route('purchases.index')}}" class="dropdown-toggle">
                         <i class="menu-icon fa fa-users"></i> Management purchasing
                     </a>
                 </li>
@@ -60,29 +72,6 @@
         </div>
         <div class="top-right">
             <div class="header-menu">
-                <div class="header-left">
-                    <button class="search-trigger"><i class="fa fa-search"></i></button>
-                    <div class="form-inline">
-                        <form class="search-form">
-                            <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
-                            <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
-                        </form>
-                    </div>
-
-                    <div class="dropdown for-notification">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-bell"></i>
-                            <span class="count bg-danger">3</span>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="notification">
-                            <p class="red">You have 3 Notification</p>
-                            <a class="dropdown-item media" href="#">
-                                <i class="fa fa-check"></i>
-                                <p>Server #1 overloaded.</p>
-                            </a>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="user-area dropdown float-right">
                     <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -92,9 +81,7 @@
 
                     <div class="user-menu dropdown-menu">
                         <a class="nav-link" href="{{route('showDistributorPageChangeProfile')}}"><i class="fa fa-user"></i>My Profile</a>
-
                         <a class="nav-link" href="{{route('showDistributorPageChangePassword')}}"><i class="fa fa-lock"></i>Change password</a>
-
 
                         <li>
                             <a href="{{ route('logout') }}"
@@ -161,6 +148,35 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
 <script src="{{asset('admin_css/assets/js/main.js')}}"></script>
 
+<script>
+    new Chart(document.getElementById("salesCount"), {
+        type: 'doughnut',
+        data: {
+            labels: ["Vente(s)"],
+            datasets: [{
+                data: [{{ $salesCount }}],
+                backgroundColor: ["rgba(54, 162, 235, 0.9)", "rgba(200, 200, 200, 0.3)"]
+            }]
+        },
+        options: {
+            legend: { position: 'bottom' }
+        }
+    });
+
+    new Chart(document.getElementById("buyCount"), {
+        type: 'doughnut',
+        data: {
+            labels: ["Achat(s)"],
+            datasets: [{
+                data: [{{ $buyCount }}],
+                backgroundColor: ["rgba(255, 99, 132, 0.9)", "rgba(200, 200, 200, 0.3)"]
+            }]
+        },
+        options: {
+            legend: { position: 'bottom' }
+        }
+    });
+</script>
 
 </body>
 </html>

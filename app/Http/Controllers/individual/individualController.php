@@ -12,7 +12,7 @@ class individualController extends Controller
 {
     public function index()
     {
-        return view('individual.index');
+        return view('individual.index.blade.php');
     }
     public function listOfProject()
     {

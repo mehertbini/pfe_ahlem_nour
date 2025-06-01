@@ -3,69 +3,129 @@
 namespace App\Http\Controllers\distributor;
 
 use App\Http\Controllers\Controller;
-use App\Models\distributor;
+use App\Models\purchase;
+use App\Models\Stock;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class distributorController extends Controller
 {
     public function index()
     {
-        $datas = distributor::all();
+        return view('distributor.statistic');
+    }
+    public function sales()
+    {
+        $datas = Stock::where('dist_id',Auth::id())->get();
         return view('distributor.index',compact('datas'));
     }
 
-    public function handleAddDistributor(Request $request)
+    public function handleDistributorAddProduct(Request $request)
     {
         $request->validate([
-            'name_dist' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'cropName' => 'required|string|max:255',
+            'qte' => 'required|numeric|min:1',
+            'unite' => 'required|string|max:50',
+            'harvestDate' => 'required|date',
+            'plantDate' => 'required|date|before:harvestDate',
+            'health' => 'required|in:Good,Average,Poor',
+            'amount'       => 'required|string|max:100',
         ]);
+        $distId = Auth::id();
 
-        Distributor::create([
-            'name_dist' => $request->name_dist,
-            'destination' => $request->destination,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+        $data = new Stock();
+        $data->cropName = $request->input('cropName');
+        $data->qte = $request->input('qte');
+        $data->unite = $request->input('unite');
+        $data->plantDate = $request->input('plantDate');
+        $data->harvestDate = $request->input('harvestDate');
+        $data->health = $request->input('health');
+        $data->amount = $request->input('amount');
+        $data->dist_id = $distId;
 
-        return redirect()->back()->with('success', 'Distributor added successfully.');
+        // Save the data to the database
+        $data->save();
+
+        return redirect()->back()->with('success', 'Product added successfully.');
     }
 
-    /**
-     * Handle updating an existing distributor.
-     */
-    public function handleUpdateDistributor(Request $request,$id)
+    public function handleDistributorDeleteProduct($id)
+    {
+        Stock::find($id)->delete();
+
+        return back()->with('success', 'Product deleted successfully.');
+    }
+
+
+
+    // Display all purchases
+    public function purchase()
+    {
+        $stocks = Stock::where('dist_id',Auth::id())->get();
+        $purchases = Purchase::latest()->get();
+
+        foreach ($purchases as $purchase) {
+            $productIds = json_decode($purchase->product_ids, true);
+            $products = Stock::whereIn('id', $productIds)->get();
+
+            $purchase->products = $products;
+            $purchase->total_amount = $products->sum('amount');
+        }
+
+        return view('distributor.purchases.index', compact('purchases','stocks'));
+    }
+
+    public function storePurchase(Request $request)
     {
         $request->validate([
-
-            'name_dist' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'type_invoice' => 'required|in:achat,vente',
+            'name_customer' => 'required|string|max:255',
+            'product_ids' => 'required|array|min:1',
+            'status' => 'required|in:1,0',
         ]);
 
-        $distributor = Distributor::find($id);
-        $distributor->update([
-            'name_dist' => $request->name_dist,
-            'destination' => $request->destination,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
+        // Récupérer les produits et calculer le total
+        $products = Stock::whereIn('id', $request->product_ids)->get();
+        $totalAmount = $products->sum('amount');
+
+        // Sauvegarder la facture
+        Purchase::create([
+            'type_invoice' => $request->type_invoice,
+            'name_customer' => $request->name_customer,
+            'product_ids' => json_encode($request->product_ids),
+            'status' => $request->status,
         ]);
 
-        return back()->with('success', 'Distributor updated successfully.');
+        return back()->with('success', 'Facture ajoutée avec succès. Total : ' . number_format($totalAmount, 2) . ' TND');
     }
 
-    /**
-     * Handle deleting a distributor.
-     */
-    public function handleDeleteDistributor($id)
+    // Show detailed view of a purchase
+    public function show(Purchase $purchase)
     {
-        Distributor::find($id)->delete();
+        $productIds = json_decode($purchase->product_ids, true); // decode to array
+        $products = Stock::whereIn('id', $productIds)->get();
 
-        return back()->with('success', 'Distributor deleted successfully.');
+        return view('distributor.purchases.show', compact('purchase', 'products'));
     }
+
+    // Delete a purchase
+    public function destroy(Purchase $purchase)
+    {
+        $purchase->delete();
+        return back()->with('success', 'Purchase deleted successfully.');
+    }
+
+    // Print a purchase
+    public function print(Purchase $purchase)
+    {
+        $productIds = json_decode($purchase->product_ids, true); // decode to array
+        $products = Stock::whereIn('id', $productIds)->get();
+
+        return view('distributor.purchases.print', compact('purchase', 'products'));
+    }
+
+
+
     public function showDistributorControllerPageChangeProfile()
     {
         return view('distributor.profile');

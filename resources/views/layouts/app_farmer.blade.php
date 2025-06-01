@@ -91,7 +91,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{route('tasks.index')}}" class="dropdown-item {{ request()->routeIs('tasks.index') ? 'active' : '' }}">
+                            <a href="{{route('tasks.index.blade.php')}}" class="dropdown-item {{ request()->routeIs('tasks.index.blade.php') ? 'active' : '' }}">
                                 Task
                             </a>
                         </li>

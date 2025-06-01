@@ -20,7 +20,7 @@ class FarmerController extends Controller
 {
     public function index()
     {
-        return view('farmer.index');
+        return view('farmer.index.blade.php');
     }
 
     public function showStocks()

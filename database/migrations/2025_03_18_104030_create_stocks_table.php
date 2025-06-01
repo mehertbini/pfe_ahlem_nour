@@ -19,6 +19,8 @@ return new class extends Migration
             $table->date('harvestDate')->nullable();
             $table->date('plantDate')->nullable();
             $table->string('health')->nullable();
+            $table->string('amount')->nullable();
+            $table->integer('dist_id')->nullable();
             $table->timestamps();
         });
     }

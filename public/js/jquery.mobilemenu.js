@@ -1,18 +1,18 @@
 (function($){
-	
+
 	//plugin's default options
 	var settings = {
 		prependTo: 'nav',				//insert at top of page by default
 		switchWidth: 768,				//width at which to switch to select, and back again
 		topOptionText: 'Select a page:'	//default "unselected" state
 	},
-	
-	menuCount = 0,						//used as a unique index for each menu if no ID exists
+
+	menuCount = 0,						//used as a unique index.blade.php for each menu if no ID exists
 	uniqueLinks = [];					//used to store unique list items for combining lists
 
 	//go to page
 	function goTo(url){document.location.href = url;}
-	
+
 	//does menu exist?
 	function menuExists(){return ($('.mnav').length) ? true : false;}
 
@@ -29,10 +29,10 @@
 
 	//function to decide if mobile or not
 	function isMobile(){return ($(document).width() < settings.switchWidth);}
-	
+
 	//function to get text value of element, but not it's children
 	function getText($item){return $.trim($item.clone().children('ul, ol').remove().end().text());}
-	
+
 	//function to check if URL is unique
 	function isUrlUnique(url){return ($.inArray(url, uniqueLinks) === -1) ? true : false;}
 
@@ -40,13 +40,13 @@
 	function createOption($item, $container, text){
 		//if no text param is passed, use list item's text, otherwise use settings.groupPageText
 		var $selected='', $disabled='', $sel_text='';
-		
+
 		if ($item.hasClass('current')) $selected='selected';
 		if ($item.hasClass('disabled')) {
 			if ($('.current').length) $disabled='disabled';
 			else $disabled='selected';
 		}
-		
+
 		$sel_text=$.trim(getText($item));
 		$sel_text = $sel_text.replace('»', '');
 		if ($item.parent('ul ul').length) $sel_text = ' – ' + $sel_text;
@@ -56,14 +56,14 @@
 		if(!text){$('<option value="'+$item.find('a:first').attr('href')+'" ' + $selected + ' ' + $disabled + '>' + $sel_text +'</option>').appendTo($container);}
 		else {$('<option value="'+$item.find('a:first').attr('href')+'" ' + $selected + ' ' + $disabled + '>'+text+'</option>').appendTo($container);}
 	}//createOption()
-	
+
 	//function to create submenus
 	function createGroup($group, $container){
 		//loop through each sub-nav list
 		$group.children('ul, ol').each(function(){
 			$(this).children('li').each(function(){
 				createOption($(this), $container);
-				
+
 				$(this).each(function(){
 					var $li_ch = $(this),
 						$container_ch =  $container;
@@ -71,18 +71,18 @@
 				});
 			});
 		});
-		
+
 	}//createGroup()
-	
+
 	//function to create <select> menu
 	function createSelect($menu){
 		//create <select> to insert into the page
 		var $select = $('<select id="mm'+menuCount+'" class="mnav">');
 		menuCount++;
-		
+
 		//create default option if the text is set (set to null for no option)
 		if(settings.topOptionText){createOption($('<li class="disabled"><a href="#">'+settings.topOptionText+'</a></li>'), $select);}
-		
+
 		//loop through first list items
 		$menu.children('li').each(function(){
 			var $li = $(this);
@@ -92,18 +92,18 @@
 				createOption($li, $select);
 				createGroup($li, $select);
 			}
-			
+
 			//otherwise it's a single level select menu, so build option
 			else {createOption($li, $select);}
 		});
-		
+
 		//add change event and prepend menu to set element
 		$select
 			.change(function(){goTo($(this).val());})
 			.prependTo(settings.prependTo);
 	}//createSelect()
 
-	
+
 	//function to run plugin functionality
 	function runPlugin(){
 		//menu doesn't exist
